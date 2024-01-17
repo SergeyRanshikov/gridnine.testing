@@ -1,19 +1,39 @@
 package com.gridnine.testing;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        List<Flight> flights = FlightBuilder.createFlights();
 
-        // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+        /**
+         * Создаем оригинальный список рейсов
+         */
+        System.out.println("Original list of flights (создаем базовый список рейсов):");
+        flights.forEach(System.out::println);
 
-            // Press Shift+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
-        }
+        /**
+         * Создаем и применяем фильтр для вылетов до текущего момента времени
+         */
+        FlightFilter departureBeforeNowFilter = new FlightFilter(List.of(new DepartureBeforeNowRule()));
+        List<Flight> afterCurrentTimeFlights = departureBeforeNowFilter.filterFlights(flights);
+        System.out.println("\nFlights with departure after the current time (исключаем вылеты до текущего момента времени):");
+        afterCurrentTimeFlights.forEach(System.out::println);
+
+        /**
+         * Создаем и применяем фильтр для сегментов с датой прилёта раньше даты вылета
+         */
+        FlightFilter arrivalBeforeDepartureFilter = new FlightFilter(List.of(new ArrivalBeforeDepartureRule()));
+        List<Flight> validArrivalDepartureFlights = arrivalBeforeDepartureFilter.filterFlights(flights);
+        System.out.println("\nFlights with arrival date after departure date (исключаем сегменты с датой прилёта раньше даты вылета):");
+        validArrivalDepartureFlights.forEach(System.out::println);
+
+        /**
+         * Создаем и применяем фильтр для перелетов, где общее время на земле превышает два часа
+         */
+        FlightFilter excessiveGroundTimeFilter = new FlightFilter(List.of(new ExcessiveGroundTimeRule(2)));
+        List<Flight> lessGroundTimeFlights = excessiveGroundTimeFilter.filterFlights(flights);
+        System.out.println("\nFlights with total ground time less than or equal to 2 hours (исключаем перелёты, где время на земле между перелетами превышает 2 часа):");
+        lessGroundTimeFlights.forEach(System.out::println);
     }
 }
