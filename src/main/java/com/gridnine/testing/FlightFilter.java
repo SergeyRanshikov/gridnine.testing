@@ -6,6 +6,11 @@ import java.util.stream.Collectors;
 class FlightFilter {
     private List<FlightFilterRule> rules;
 
+    /**
+     * Метод filterFlights принимает список рейсов и возвращает
+     * только те рейсы, которые соответствуют всем правилам фильтрации.
+     */
+
     public FlightFilter(List<FlightFilterRule> rules) {
         this.rules = rules;
     }
